@@ -12,7 +12,16 @@ router.post('/register', async (req, res, next) => {
     const user = await db('users').where({ id }).first()
     res.json(user)
   } catch (err) {
+    const { username, password } = req.body
+    const users = db('users').where({ username }) 
+    if (!username || !password) {
+      next({ status: 401, message: "username and password required" })
+    }
+    if (users.length != 0) {
+      next({ status: 401, message: "username taken" })
+    }
     next(err)
+    
   }
   /*
     IMPLEMENT
