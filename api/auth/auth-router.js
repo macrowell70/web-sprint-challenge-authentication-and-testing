@@ -39,7 +39,11 @@ router.post('/login', async (req, res, next) => {
       next({ status: 401, message: "invalid credentials" })
     }
   } catch (err) {
-      next(err)
+    const { username, password } = req.body
+    if (!username || !password) {
+      next({ status: 401, message: "username and password required" })
+    }
+    next(err)
   }
 });
 
