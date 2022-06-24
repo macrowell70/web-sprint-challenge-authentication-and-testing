@@ -1,5 +1,22 @@
+const jwt = require('jsonwebtoken');
+const db = require('../../data/dbConfig');
+
 module.exports = (req, res, next) => {
-  next();
+  const token = req.headers.authorization
+  if (token) {
+    jwt.verify(token, "shh", async (err, decoded) => {
+      if (err != null) {
+        next({ status: 401, message: "token invalid" })
+      } 
+      const user = await db('users').where("id", decoded.subject).first()
+      if (user == null) {
+        next({ status: 401, message: "token invalid"})
+      }
+      next()
+    })
+  } else {
+    next({ status: 401, message: "token required" })
+  }
   /*
     IMPLEMENT
 
