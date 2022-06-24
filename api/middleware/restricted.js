@@ -6,11 +6,13 @@ module.exports = (req, res, next) => {
   if (token) {
     jwt.verify(token, "shh", async (err, decoded) => {
       if (err != null) {
-        next({ status: 401, message: "token invalid" })
+        res.status(401).json({ message: "token invalid" })
+        return;
       } 
       const user = await db('users').where("id", decoded.subject).first()
       if (user == null) {
-        next({ status: 401, message: "token invalid"})
+        res.status(401).json({ message: "token invalid" })
+        return;
       }
       next()
     })
